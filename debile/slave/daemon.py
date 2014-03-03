@@ -205,7 +205,7 @@ def iterate():
 
 def main():
     logging.basicConfig(
-        format='%(asctime)s - %(levelname)8s - [debile-master] %(message)s',
+        format='%(asctime)s - %(levelname)8s - [debile-slave] %(message)s',
         level=logging.DEBUG
     )
 
@@ -215,10 +215,9 @@ def main():
     #formatter = logging.Formatter('[debile-slave] %(levelname)7s - %(message)s')
     #syslog.setFormatter(formatter)
     #logger.addHandler(syslog)
-    #logger.info("Booting debile-slave daemon")
 
     logger = logging
-    logger.info("Booting debile-masterd daemon")
+    logger.info("Booting debile-slave daemon")
 
     while True:
         try:
