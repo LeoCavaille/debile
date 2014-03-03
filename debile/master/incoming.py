@@ -50,7 +50,7 @@ def process_directory(path):
 
 
 def process_changes(session, path):
-    changes = parse_changes_file(path)
+    changes = parse_changes_file(path, directory=os.path.dirname(path))
     try:
         changes.validate()
     except ChangesFileException as e:
@@ -90,7 +90,7 @@ def reject_changes(session, changes, tag):
         "source": changes.get_package_name(),
     })
 
-    for fp in [changes.get_filename()] + changes.get_files():
+    for fp in [changes.get_changes_file()] + changes.get_files():
         os.unlink(fp)
     # Note this in the log.
 
