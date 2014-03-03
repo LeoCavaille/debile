@@ -24,7 +24,9 @@ from debile.slave.core import config
 
 from contextlib import contextmanager
 import xmlrpclib
+import socket
 import os
+import sys
 
 
 def get_proxy():
@@ -39,4 +41,14 @@ def get_proxy():
             host=xml['host'],
             port=xml['port'],
         ), allow_none=True)
+
+    try:
+        proxy._non_existing_method()
+    except xmlrpclib.Fault:
+        # We should trigger this
+        pass
+    except socket.error:
+        raise Exception(
+                'Connection to master failed. Check your "xmlrpc" settings.')
+
     return proxy
