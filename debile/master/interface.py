@@ -25,7 +25,7 @@ from debile.master.core import config
 from debile.master.messaging import emit
 from debile.utils.keys import import_key
 
-from sqlalchemy import exists
+from sqlalchemy import exists, or_
 import datetime as dt
 
 
@@ -55,9 +55,10 @@ class DebileMasterInterface(object):
 
     @builder_method
     def get_next_job(self, suites, arches, capabilities):
+        arches_conditions = [ Arch.name == a for a in arches ]
         arches = [
-            x.id for x in session.query(Arch).filter(
-                Arch.name.in_(arches)
+            x.id for x in NAMESPACE.session.query(Arch).filter(
+                or_(*arches_conditions)
             ).all()
         ]
         # This horseshit nonsense is due to SQLAlchemy not doing
@@ -67,7 +68,7 @@ class DebileMasterInterface(object):
             Job.assigned_at==None,
             Job.finished_at==None,
             Job.arch_id.in_(arches),
-            Job.affinity.in_(arches) | Job.affinity_id==None,
+            Job.affinity_id.in_(arches) | Job.affinity_id==None,
         ).outerjoin(Job.depedencies).filter(
             JobDependencies.id==None
         ).first()
